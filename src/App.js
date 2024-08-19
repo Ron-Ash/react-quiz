@@ -15,6 +15,7 @@ const initialState = {
   questions: [],
   questionIndex: 0,
   points: 0,
+  highscore: 0,
 };
 
 function reducer(state, { action, newState }) {
@@ -40,19 +41,31 @@ function reducer(state, { action, newState }) {
     case "correctlyAnswered":
       return {
         ...state,
-        points: state.points + state.questions[state.questionIndex].points,
+        points: state.points + state.questions.at(state.questionIndex).points,
       };
     case "finishQuiz":
       return { ...state, status: "finished" };
+    case "newHighScore":
+      return { ...state, highscore: newState.highscore };
+    case "restartQuiz":
+      return {
+        ...initialState,
+        questions: state.questions,
+        status: "active",
+        highscore: state.highscore,
+      };
     default:
       throw new Error("Unknown action");
   }
 }
 
 function App() {
-  const [{ status, questions, questionIndex, points }, dispatch] = useReducer(
-    reducer,
-    initialState
+  const [{ status, questions, questionIndex, points, highscore }, dispatch] =
+    useReducer(reducer, initialState);
+
+  const totalPoints = questions.reduce(
+    (acc, question) => acc + question.points,
+    0
   );
 
   useEffect(function () {
@@ -80,11 +93,20 @@ function App() {
     dispatch({ action: "correctlyAnswered" });
   }
 
+  function handleRestart() {
+    dispatch({ action: "restartQuiz" });
+  }
+
   function handleNextQuestion() {
     if (status !== "active") return;
-    if (questionIndex + 1 >= questions.length)
+    if (questionIndex + 1 >= questions.length) {
       dispatch({ action: "finishQuiz" });
-    else dispatch({ action: "moveForward" });
+      if (points > highscore)
+        dispatch({
+          action: "newHighScore",
+          newState: { highscore: points },
+        });
+    } else dispatch({ action: "moveForward" });
   }
 
   return (
@@ -113,7 +135,14 @@ function App() {
             />
           </>
         )}
-        {status === "finished" && <FinishScreen />}
+        {status === "finished" && (
+          <FinishScreen
+            points={points}
+            totalP={totalPoints}
+            highscore={highscore}
+            handleRestartF={handleRestart}
+          />
+        )}
       </Main>
     </div>
   );
