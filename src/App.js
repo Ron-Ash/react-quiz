@@ -16,6 +16,7 @@ const initialState = {
   questionIndex: 0,
   points: 0,
   highscore: 0,
+  secondsRemaining: 2 * 60,
 };
 
 function reducer(state, { action, newState }) {
@@ -54,14 +55,19 @@ function reducer(state, { action, newState }) {
         status: "active",
         highscore: state.highscore,
       };
+    case "decreaseTime":
+      if (state.secondsRemaining <= 0) return { ...state, status: "finished" };
+      return { ...state, secondsRemaining: state.secondsRemaining - 1 };
     default:
       throw new Error("Unknown action");
   }
 }
 
 function App() {
-  const [{ status, questions, questionIndex, points, highscore }, dispatch] =
-    useReducer(reducer, initialState);
+  const [
+    { status, questions, questionIndex, points, highscore, secondsRemaining },
+    dispatch,
+  ] = useReducer(reducer, initialState);
 
   const totalPoints = questions.reduce(
     (acc, question) => acc + question.points,
@@ -109,6 +115,10 @@ function App() {
     } else dispatch({ action: "moveForward" });
   }
 
+  function handleTimeOut() {
+    dispatch({ action: "finishQuiz" });
+  }
+
   return (
     <div className="app">
       <Header />
@@ -133,6 +143,8 @@ function App() {
               question={questions[questionIndex]}
               handleAnswerQuestionF={handleAnswerQuestion}
               handleNextQuestionF={handleNextQuestion}
+              handleDecreaseTimeF={() => dispatch({ action: "decreaseTime" })}
+              secondsRemaining={secondsRemaining}
             />
           </>
         )}

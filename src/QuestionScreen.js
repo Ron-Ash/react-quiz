@@ -1,9 +1,12 @@
 import { useState } from "react";
+import Timer from "./Timer";
 
 export default function QuestionScreen({
   question,
   handleAnswerQuestionF,
   handleNextQuestionF,
+  handleDecreaseTimeF,
+  secondsRemaining,
 }) {
   const [answered, setAnswered] = useState(false);
 
@@ -39,11 +42,17 @@ export default function QuestionScreen({
           </button>
         ))}
       </div>
-      {answered && (
-        <button className="btn btn-ui" onClick={handleNextQuestion}>
-          next
-        </button>
-      )}
+      <footer>
+        <Timer
+          handleDecreaseTimeFF={handleDecreaseTimeF}
+          secondsRemaining={secondsRemaining}
+        />
+        {answered && (
+          <button className="btn btn-ui" onClick={handleNextQuestion}>
+            next
+          </button>
+        )}
+      </footer>
     </div>
   );
 }
