@@ -124,8 +124,9 @@ function App() {
         {status === "active" && (
           <>
             <ProgressCounter
-              total={questions.length}
+              totalQuestions={questions.length}
               currentQuestion={questionIndex + 1}
+              totalPoints={totalPoints}
               points={points}
             />
             <QuestionScreen

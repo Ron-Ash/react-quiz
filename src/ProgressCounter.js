@@ -1,10 +1,19 @@
-export default function ProgressCounter({ total, currentQuestion, points }) {
+export default function ProgressCounter({
+  totalQuestions,
+  currentQuestion,
+  totalPoints,
+  points,
+}) {
   return (
-    <div className="progress">
-      <p className="progress">
-        {currentQuestion}/{total} questions finished, {points} Answered
-        correctly
+    <header className="progress">
+      <progress max={totalQuestions} value={currentQuestion} />
+      <p>
+        Question <strong>{currentQuestion}</strong>/{totalQuestions}
       </p>
-    </div>
+      <p>
+        {" "}
+        <strong>{points}</strong>/{totalPoints} points
+      </p>
+    </header>
   );
 }
