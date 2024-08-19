@@ -1,10 +1,15 @@
 import "./App.css";
-import DateCounter from "./DateCounter";
+import Header from "./Header";
+import Main from "./Main";
+import ProgressCounter from "./ProgressCounter";
 
 function App() {
   return (
-    <div>
-      <DateCounter />
+    <div className="app">
+      <Header />
+      <Main>
+        <ProgressCounter />
+      </Main>
     </div>
   );
 }
