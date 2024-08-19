@@ -9,6 +9,7 @@ Own solution to the udemy course "The Ultimate React Course 2024: React, Next.js
 
 - clone repository
 - enter react-quiz project
+- run `npm install`
 - run `npm i json-server`
 - run `npm run server` in terminal1
 - run `npm start` in terminal2
