@@ -115,10 +115,6 @@ function App() {
     } else dispatch({ action: "moveForward" });
   }
 
-  function handleTimeOut() {
-    dispatch({ action: "finishQuiz" });
-  }
-
   return (
     <div className="app">
       <Header />
