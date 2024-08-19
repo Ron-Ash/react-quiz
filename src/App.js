@@ -7,13 +7,14 @@ import Error from "./Error";
 import StartScreen from "./StartScreen";
 import QuestionScreen from "./QuestionScreen";
 import FinishScreen from "./FinishScreen";
+import ProgressCounter from "./ProgressCounter";
 
 const initialState = {
   // 'loading', 'error', 'ready', 'active', 'finished'
   status: "loading",
   questions: [],
   questionIndex: 0,
-  correctlyAnswered: 0,
+  points: 0,
 };
 
 function reducer(state, { action, newState }) {
@@ -29,16 +30,30 @@ function reducer(state, { action, newState }) {
         ...state,
         status: "active",
         questionIndex: 0,
-        correctlyAnswered: 0,
+        points: 0,
       };
+    case "moveForward":
+      return {
+        ...state,
+        questionIndex: state.questionIndex + 1,
+      };
+    case "correctlyAnswered":
+      return {
+        ...state,
+        points: state.points + state.questions[state.questionIndex].points,
+      };
+    case "finishQuiz":
+      return { ...state, status: "finished" };
     default:
       throw new Error("Unknown action");
   }
 }
 
 function App() {
-  const [{ status, questions, questionIndex, correctlyAnswered }, dispatch] =
-    useReducer(reducer, initialState);
+  const [{ status, questions, questionIndex, points }, dispatch] = useReducer(
+    reducer,
+    initialState
+  );
 
   useEffect(function () {
     async function fetchQuestions() {
@@ -60,6 +75,18 @@ function App() {
     dispatch({ action: "startQuiz" });
   }
 
+  function handleAnswerQuestion() {
+    if (status !== "active") return;
+    dispatch({ action: "correctlyAnswered" });
+  }
+
+  function handleNextQuestion() {
+    if (status !== "active") return;
+    if (questionIndex + 1 >= questions.length)
+      dispatch({ action: "finishQuiz" });
+    else dispatch({ action: "moveForward" });
+  }
+
   return (
     <div className="app">
       <Header />
@@ -73,7 +100,18 @@ function App() {
           />
         )}
         {status === "active" && (
-          <QuestionScreen question={questions[questionIndex]} />
+          <>
+            <ProgressCounter
+              total={questions.length}
+              currentQuestion={questionIndex + 1}
+              points={points}
+            />
+            <QuestionScreen
+              question={questions[questionIndex]}
+              handleAnswerQuestionF={handleAnswerQuestion}
+              handleNextQuestionF={handleNextQuestion}
+            />
+          </>
         )}
         {status === "finished" && <FinishScreen />}
       </Main>

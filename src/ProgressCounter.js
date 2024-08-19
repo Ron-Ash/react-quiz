@@ -1,8 +1,10 @@
-export default function ProgressCounter() {
+export default function ProgressCounter({ total, currentQuestion, points }) {
   return (
     <>
-      <p>2/15</p>
-      <p>questions</p>
+      <p>
+        {currentQuestion}/{total} questions finished, {points} Answered
+        correctly
+      </p>
     </>
   );
 }
